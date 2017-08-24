@@ -76,6 +76,12 @@
             android:layout_gravity="center"
             android:visibility="gone"
             />
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/find_video_container"
+            />
+
     </FrameLayout>
     <LinearLayout
         android:id="@+id/find_comment_layout"

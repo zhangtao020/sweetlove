@@ -42,9 +42,9 @@ class DetailActivity : AppCompatActivity() {
         detail_recyclerview.adapter = adapter
         detail_recyclerview.layoutManager = LinearLayoutManager(this)
 
+        adapter.setFragmentTransaction(supportFragmentManager.beginTransaction())
 
 //        pDetail.requestComment(adapter,detailData.id)
-
         pDetail.requestComment(adapter,detailData.id,"0-20")
     }
 
@@ -52,5 +52,12 @@ class DetailActivity : AppCompatActivity() {
         (application as SeeApp).getAppComponent().
                 detailActivityComponent().activity(this).
                 build().inject(this)
+    }
+
+
+    interface OnVideoListener{
+
+        fun onStart(url:String)
+        fun onStop()
     }
 }

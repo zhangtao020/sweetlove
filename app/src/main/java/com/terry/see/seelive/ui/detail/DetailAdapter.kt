@@ -1,6 +1,7 @@
 package com.terry.see.seelive.ui.detail
 
 import android.app.Activity
+import android.support.v4.app.FragmentTransaction
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
@@ -28,6 +29,11 @@ class DetailAdapter(var activity: Activity, var headerData: ItemRecommend) : Rec
         val ITEM_TYPE_COMMENT:Int = 2
     }
 
+    fun setFragmentTransaction( transaction: FragmentTransaction){
+        mTransaction = transaction
+    }
+
+    var mTransaction: FragmentTransaction?=null
     var mValues: MutableList<DataComment.InnerItemComment> = mutableListOf()
 
     fun buildData(values: DataComment?){
@@ -66,10 +72,14 @@ class DetailAdapter(var activity: Activity, var headerData: ItemRecommend) : Rec
 
     }
 
-    fun setPicViewLayoutParams(imgView: ImageView, scaleType: Float){
+    fun setPicViewLayoutParams(imgView: ImageView,videoContainer:FrameLayout?, scaleType: Float){
         val width = AppDeviceUtil.getScreenWidth(activity) - AppDeviceUtil.dpToPx(activity, 40)
         var params = FrameLayout.LayoutParams(width, (width / scaleType).toInt())
         imgView.layoutParams = params
+
+        if (videoContainer!=null){
+            videoContainer!!.layoutParams = params
+        }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -140,12 +150,18 @@ class DetailAdapter(var activity: Activity, var headerData: ItemRecommend) : Rec
         holder.itemView.find_comment_layout.visibility = View.GONE
         holder.itemView.find_bottom_line_iv.visibility = View.VISIBLE
 
+        holder.itemView.find_video_start_iv.setOnClickListener {
+            holder.itemView.find_video_start_iv.visibility = View.GONE
+            holder.itemView.find_pic_iv.visibility = View.GONE
+            if (mTransaction!=null)mTransaction!!.replace(R.id.find_video_container,VideoPlayFragment.newInstance(headerData.video.video[0])).commit()
+        }
+
         when (headerData.type){
             "video" ->
                 if(headerData.video.thumbnail.isNotEmpty()){
                     holder.itemView.find_pic_container.visibility = View.VISIBLE
                     holder.itemView.find_video_start_iv.visibility = View.VISIBLE
-                    setPicViewLayoutParams(holder.itemView.find_pic_iv,headerData.video.width/headerData.video.height.toFloat())
+                    setPicViewLayoutParams(holder.itemView.find_pic_iv,holder.itemView.find_video_container,headerData.video.width/headerData.video.height.toFloat())
                     Glide.with(activity).load(headerData.video.thumbnail[0]).centerCrop().into(holder.itemView.find_pic_iv)
                 }else{
                     holder.itemView.find_pic_container.visibility = View.GONE
@@ -154,7 +170,7 @@ class DetailAdapter(var activity: Activity, var headerData: ItemRecommend) : Rec
                 if (headerData.gif.images.isNotEmpty()){
                     holder.itemView.find_pic_container.visibility = View.VISIBLE
                     holder.itemView.find_video_start_iv.visibility = View.GONE
-                    setPicViewLayoutParams(holder.itemView.find_pic_iv,headerData.gif.width/headerData.gif.height.toFloat())
+                    setPicViewLayoutParams(holder.itemView.find_pic_iv,null,headerData.gif.width/headerData.gif.height.toFloat())
                     Glide.with(activity).load(headerData.gif.images[0]).asGif().diskCacheStrategy(DiskCacheStrategy.SOURCE).into(holder.itemView.find_pic_iv)
                 }else{
                     holder.itemView.find_pic_container.visibility = View.GONE
@@ -168,7 +184,7 @@ class DetailAdapter(var activity: Activity, var headerData: ItemRecommend) : Rec
                     val width = headerData.image.width
                     val height = headerData.image.height.toFloat()
 
-                    setPicViewLayoutParams(holder.itemView.find_pic_iv, width/height)
+                    setPicViewLayoutParams(holder.itemView.find_pic_iv,null, width/height)
 
                     var mGlide = Glide.with(activity).load(headerData.image.big[0])
                     if (height > 1000){
