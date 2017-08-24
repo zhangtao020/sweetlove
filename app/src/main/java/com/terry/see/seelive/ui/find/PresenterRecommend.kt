@@ -14,7 +14,7 @@ class PresenterRecommend @Inject constructor() {
     lateinit var apiService:ApiService
         @Inject set
 
-    fun requestComment(adapter: FindAdapter){
+    fun requestRecommend(adapter: FindAdapter){
 
         apiService.recomment(Keys.recomend_url).filter { it.list.isNotEmpty() }
                 .subscribeOn(Schedulers.io())

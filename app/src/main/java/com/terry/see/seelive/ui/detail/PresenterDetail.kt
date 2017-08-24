@@ -15,14 +15,23 @@ class PresenterDetail @Inject constructor() {
     lateinit var apiService: ApiService
         @Inject set
 
-    fun requestRecommend(adapter: FindAdapter){
+    fun requestComment(adapter: DetailAdapter,id:String){
 
-        apiService.recomment(Keys.recomend_url).filter { it.list.isNotEmpty() }
+        apiService.comment(Keys.comment_url(id))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    adapter.clear()
-                    adapter.buildData(it.list)
+                    adapter.buildData(it)
+                }
+    }
+
+    fun requestComment(adapter: DetailAdapter,id:String,page:String){
+
+        apiService.commentForParameter(id,page)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    adapter.buildData(it)
                 }
     }
 }

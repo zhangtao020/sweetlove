@@ -16,4 +16,6 @@ interface AppComponent {
     var appContext:Context
 
     fun mainActivityComponent():MainActComponent.Builder
+
+    fun detailActivityComponent():DetailActComponent.Builder
 }

@@ -42,7 +42,7 @@ class AppModule(var app:SeeApp) {
     @Singleton
     internal fun provideApiService(okHttpClient: OkHttpClient): ApiService {
         var retrofit = Retrofit.Builder().client(okHttpClient).
-                baseUrl(Keys.base_url).
+                baseUrl(Keys.c_api_url).
                 addCallAdapterFactory(RxJava2CallAdapterFactory.create()).
                 addConverterFactory(GsonConverterFactory.create()).build()
 
