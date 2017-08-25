@@ -14,6 +14,7 @@ import com.pili.pldroid.player.AVOptions
 import com.pili.pldroid.player.PLMediaPlayer
 import com.pili.pldroid.player.widget.PLVideoView
 import com.terry.see.seelive.R
+import com.terry.see.seelive.listener.OnVideoListener
 import kotlinx.android.synthetic.main.fragment_video_play.*
 
 
@@ -39,6 +40,11 @@ class VideoPlayFragment : Fragment() {
 
     private var mVideoPath: String? = null   //播放路径
 
+    private var listener: OnVideoListener? = null
+
+    fun setVideoListener(listener: OnVideoListener){
+        this.listener = listener
+    }
 
     private fun setOptions(codecType: Int) {
         val options = AVOptions()
@@ -79,7 +85,9 @@ class VideoPlayFragment : Fragment() {
         val codec = 0
         setOptions(codec)
 
+        play_videoView.setBufferingIndicator(play_loading_view)
         play_videoView.setOnInfoListener(mOnInfoListener)
+        play_videoView.setOnCompletionListener(mOnCompleteListener)
         play_videoView.setOnErrorListener(mOnErrorListener)
         play_videoView.displayAspectRatio = PLVideoView.ASPECT_RATIO_PAVED_PARENT
     }
@@ -88,6 +96,13 @@ class VideoPlayFragment : Fragment() {
         super.onDestroyView()
         play_videoView.stopPlayback()
         mHandler.removeCallbacksAndMessages(null)
+        Log.d("zt", "onDestroyView-----")
+    }
+
+    private val mOnCompleteListener = PLMediaPlayer.OnCompletionListener {
+        if (listener != null){
+            listener!!.onStop()
+        }
     }
 
 

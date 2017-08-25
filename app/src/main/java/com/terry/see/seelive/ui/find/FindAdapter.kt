@@ -79,8 +79,13 @@ class FindAdapter(var activity: Activity, var mValues: MutableList<ItemRecommend
                 if(recommend.video.thumbnail.isNotEmpty()){
                     holder.itemView.find_pic_container.visibility = View.VISIBLE
                     holder.itemView.find_video_start_iv.visibility = View.VISIBLE
+                    holder.itemView.find_video_bottom_view.visibility = View.VISIBLE
+
+                    holder.itemView.find_video_play_count_tv.text = recommend.video.playcount.toString() + "次播放"
+                    holder.itemView.find_video_play_time_tv.text = getDurationStr(recommend.video.duration)
+
                     setPicViewLayoutParams(holder.itemView.find_pic_iv,recommend.video.width/recommend.video.height.toFloat())
-                    Glide.with(activity).load(recommend.video.thumbnail[0]).centerCrop().into(holder.itemView.find_pic_iv)
+                    Glide.with(activity).load(recommend.video.thumbnail[0]).into(holder.itemView.find_pic_iv)
                 }else{
                     holder.itemView.find_pic_container.visibility = View.GONE
                 }
@@ -88,6 +93,7 @@ class FindAdapter(var activity: Activity, var mValues: MutableList<ItemRecommend
                 if (recommend.gif.gif_thumbnail.isNotEmpty()){
                     holder.itemView.find_pic_container.visibility = View.VISIBLE
                     holder.itemView.find_video_start_iv.visibility = View.GONE
+                    holder.itemView.find_video_bottom_view.visibility = View.GONE
                     setPicViewLayoutParams(holder.itemView.find_pic_iv,recommend.gif.width/recommend.gif.height.toFloat())
                     Glide.with(activity).load(recommend.gif.images[0]).asGif().diskCacheStrategy(DiskCacheStrategy.SOURCE).into(holder.itemView.find_pic_iv)
                 }else{
@@ -98,13 +104,13 @@ class FindAdapter(var activity: Activity, var mValues: MutableList<ItemRecommend
                 if (recommend.image.thumbnail_small.isNotEmpty()){
                     holder.itemView.find_pic_container.visibility = View.VISIBLE
                     holder.itemView.find_video_start_iv.visibility = View.GONE
-
+                    holder.itemView.find_video_bottom_view.visibility = View.GONE
                     var height = recommend.image.height.toFloat()
                     if (recommend.image.height > 1000){
                         height = AppDeviceUtil.getScreenWidth(activity).toFloat() - AppDeviceUtil.dpToPx(activity,40)
                     }
                     setPicViewLayoutParams(holder.itemView.find_pic_iv,recommend.image.width/height)
-                    Glide.with(activity).load(recommend.image.thumbnail_small[0]).centerCrop().into(holder.itemView.find_pic_iv)
+                    Glide.with(activity).load(recommend.image.thumbnail_small[0]).into(holder.itemView.find_pic_iv)
                 }else{
                     holder.itemView.find_pic_container.visibility = View.GONE
                     holder.itemView.find_video_start_iv.visibility = View.GONE
@@ -112,12 +118,27 @@ class FindAdapter(var activity: Activity, var mValues: MutableList<ItemRecommend
             "text" -> {
                 holder.itemView.find_pic_container.visibility = View.GONE
                 holder.itemView.find_video_start_iv.visibility = View.GONE
+                holder.itemView.find_video_bottom_view.visibility = View.GONE
             }
             else -> {
                 holder.itemView.find_pic_container.visibility = View.GONE
                 holder.itemView.find_video_start_iv.visibility = View.GONE
+                holder.itemView.find_video_bottom_view.visibility = View.GONE
             }
         }
+    }
+
+    fun getDurationStr(duration:Int):String{
+        var sb = StringBuilder()
+
+        if (duration>60){
+            val m = duration/60
+            if (m>9)sb.append(m) else sb.append("0").append(m)
+            sb.append(":").append(duration - m*60)
+        }else{
+            sb.append("00:").append(duration)
+        }
+        return sb.toString()
     }
 
     override fun getItemCount(): Int {

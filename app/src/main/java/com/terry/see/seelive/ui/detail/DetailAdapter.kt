@@ -14,6 +14,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.terry.see.seelive.R
 import com.terry.see.seelive.bean.DataComment
 import com.terry.see.seelive.bean.ItemRecommend
+import com.terry.see.seelive.listener.OnVideoListener
 import com.terry.see.seelive.util.AppDeviceUtil
 import com.terry.see.seelive.util.GlideCircleTransform
 import kotlinx.android.synthetic.main.fragment_find_item.view.*
@@ -151,9 +152,23 @@ class DetailAdapter(var activity: Activity, var headerData: ItemRecommend) : Rec
         holder.itemView.find_bottom_line_iv.visibility = View.VISIBLE
 
         holder.itemView.find_video_start_iv.setOnClickListener {
+            holder.itemView.find_video_container.visibility = View.VISIBLE
             holder.itemView.find_video_start_iv.visibility = View.GONE
             holder.itemView.find_pic_iv.visibility = View.GONE
-            if (mTransaction!=null)mTransaction!!.replace(R.id.find_video_container,VideoPlayFragment.newInstance(headerData.video.video[0])).commit()
+            var fragment = VideoPlayFragment.newInstance(headerData.video.video[0])
+            fragment.setVideoListener(object :OnVideoListener{
+                override fun onStop() {
+                    holder.itemView.find_video_start_iv.visibility = View.VISIBLE
+                    holder.itemView.find_pic_iv.visibility = View.VISIBLE
+                    holder.itemView.find_video_container.visibility = View.GONE
+                }
+
+                override fun onStart(url: String) {
+
+                }
+
+            })
+            if (mTransaction!=null)mTransaction!!.replace(R.id.find_video_container,fragment).commit()
         }
 
         when (headerData.type){
@@ -162,7 +177,7 @@ class DetailAdapter(var activity: Activity, var headerData: ItemRecommend) : Rec
                     holder.itemView.find_pic_container.visibility = View.VISIBLE
                     holder.itemView.find_video_start_iv.visibility = View.VISIBLE
                     setPicViewLayoutParams(holder.itemView.find_pic_iv,holder.itemView.find_video_container,headerData.video.width/headerData.video.height.toFloat())
-                    Glide.with(activity).load(headerData.video.thumbnail[0]).centerCrop().into(holder.itemView.find_pic_iv)
+                    Glide.with(activity).load(headerData.video.thumbnail[0]).into(holder.itemView.find_pic_iv)
                 }else{
                     holder.itemView.find_pic_container.visibility = View.GONE
                 }
@@ -191,6 +206,12 @@ class DetailAdapter(var activity: Activity, var headerData: ItemRecommend) : Rec
                         mGlide.override(width/2,height.toInt()/2)
                     }else if (height > 1500){
                         mGlide.override(width/2.5.toInt(),height.toInt()/2.5.toInt())
+                    }else if (height > 3000){
+                        mGlide.override(width/3,height.toInt()/3)
+                    }else if (height > 5000){
+                        mGlide.override(width/5,height.toInt()/5)
+                    }else {
+                        mGlide.override(width/8,height.toInt()/8)
                     }
                     mGlide.into(holder.itemView.find_pic_iv)
                 }else{
