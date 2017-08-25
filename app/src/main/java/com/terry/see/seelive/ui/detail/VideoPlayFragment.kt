@@ -48,7 +48,7 @@ class VideoPlayFragment : Fragment() {
         options.setInteger(AVOptions.KEY_GET_AV_FRAME_TIMEOUT, 10 * 1000)
         options.setInteger(AVOptions.KEY_PROBESIZE, 128 * 1024)
         // Some optimization with buffering mechanism when be set to 1
-        options.setInteger(AVOptions.KEY_LIVE_STREAMING, 1)
+        options.setInteger(AVOptions.KEY_LIVE_STREAMING,0)
         options.setInteger(AVOptions.KEY_DELAY_OPTIMIZATION, 1)
         // 1 -> hw codec enable, 0 -> disable [recommended]
         options.setInteger(AVOptions.KEY_MEDIACODEC, codecType)
@@ -82,12 +82,6 @@ class VideoPlayFragment : Fragment() {
         play_videoView.setOnInfoListener(mOnInfoListener)
         play_videoView.setOnErrorListener(mOnErrorListener)
         play_videoView.displayAspectRatio = PLVideoView.ASPECT_RATIO_PAVED_PARENT
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        play_videoView.stopPlayback()
-        mHandler.removeCallbacksAndMessages(null)
     }
 
     override fun onDestroyView() {

@@ -13,6 +13,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        ndk { abiFilters "armeabi", "armeabi-v7a", "arm64-v8a", "x86" }//让64位的操作系统可以兼容32位的库文件
     }
     buildTypes {
         release {
